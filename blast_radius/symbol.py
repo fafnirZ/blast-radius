@@ -51,7 +51,10 @@ class ClassSymbol(Symbol):
             tree = ast.parse(source_code)
 
             class_name, bound_obj_name = self.symbl.split(".")
+
+            ###############################################
             # get all ClassDefn Nodes matching class_name
+            ###############################################
             matching_class_nodes = [
                 node
                 for node in ast.walk(tree)
@@ -59,8 +62,26 @@ class ClassSymbol(Symbol):
             ]
             assert len(matching_class_nodes) == 1
             class_node = matching_class_nodes[0]
-            print(class_node)
 
+            #################################################
+            # get all method or attribute where it matches 
+            #################################################
+            matching_bound_objects = [
+                node
+                for node in ast.walk(class_node)
+                if (
+                    (isinstance(node, ast.FunctionDef) and node.name == bound_obj_name)
+                    or (isinstance(node, ast.AnnAssign) and node.target.id == bound_obj_name)
+                )
+            ]
+            assert len(matching_bound_objects) == 1
+            matching_bound_object = matching_bound_objects[0]
+            if isinstance(matching_bound_object, ast.FunctionDef):
+                return ClassMethodSymbol(self.value)
+            elif isinstance(matching_bound_object, ast.AnnAssign):
+                return ClassAttributeSymbol(self.value)
+            else:
+                raise RuntimeError
         else:
             raise RuntimeError
 
