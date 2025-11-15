@@ -77,6 +77,9 @@ class ImportGatherer(ast.NodeVisitor):
 
 @dataclass
 class FileImportAssociation:
+    """
+    This means the `file` contains the following `import` statements.
+    """
     associations: dict[Path, ImportGatherer]
 
     @classmethod
