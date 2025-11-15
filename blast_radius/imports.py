@@ -4,6 +4,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional, Union
 
+from blast_radius.files import get_all_python_file_paths
+
 # Define a custom type to hold import information for clarity
 
 @dataclass
@@ -11,7 +13,7 @@ class ImportInfo:
     name: str
     aliases: Optional[list[AliasInfo]]
     def __repr__(self) -> str:
-        return f"ImportInfo(name={self.name},aliases={self.aliases})"
+        return f"ImportInfo(name='{self.name}',aliases={self.aliases})"
 
 @dataclass
 class AliasInfo:
@@ -19,7 +21,7 @@ class AliasInfo:
     asname: str | None
 
     def __repr__(self) -> str:
-        return f"AliasInfo(name={self.name},asname={self.asname})"
+        return f"AliasInfo(name='{self.name}', asname='{self.asname}')"
 
 class ImportGatherer(ast.NodeVisitor):
     imports: list[ImportInfo]
@@ -68,3 +70,25 @@ class ImportGatherer(ast.NodeVisitor):
         gatherer.visit(tree)
 
         return inst
+    
+    def __repr__(self) -> str:
+        return f"ImportGatherer(imports={self.imports})"
+    
+
+@dataclass
+class FileImportAssociation:
+    associations: dict[Path, ImportGatherer]
+
+    @classmethod
+    def build(cls, root_path: Path) -> FileImportAssociation:
+        assert isinstance(root_path, Path)
+
+        _associations = {}
+        file_paths = get_all_python_file_paths(root_path)
+        
+        for file_path in file_paths:
+            gatherer = ImportGatherer.from_file_path(file_path)
+            _associations[file_path] = gatherer
+        
+        return cls(associations=_associations)
+    

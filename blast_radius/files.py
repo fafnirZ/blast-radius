@@ -1,6 +1,7 @@
+from functools import lru_cache
 from pathlib import Path
 
-
+@lru_cache
 def get_all_python_file_paths(root_path: Path) -> list[Path]:
     assert isinstance(root_path, Path)
     results = []
