@@ -1,5 +1,6 @@
 
 
+from abc import abstractmethod
 import ast
 from pathlib import Path
 from typing import Self
@@ -26,6 +27,11 @@ class BaseNodeVisitor(ast.NodeVisitor):
         gatherer = inst
         gatherer.visit(tree)
         return inst
+    
+    @property
+    @abstractmethod
+    def attrs(self):
+        raise NotImplementedError
     
     def __repr__(self) -> str:
         return (

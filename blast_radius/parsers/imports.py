@@ -31,6 +31,7 @@ class ImportGatherer(BaseNodeVisitor):
         # Stores information about all imports found
         self.imports: list[ImportInfo] = []
 
+
     def visit_Import(self, node: ast.Import):
         # Handles statements like: 'import module1', 'import module2 as alias'
         names = []
@@ -50,7 +51,10 @@ class ImportGatherer(BaseNodeVisitor):
         
         self.imports.append(ImportInfo(name=module_name, aliases=names))
         self.generic_visit(node) # Continue traversing
-    
+
+    @property
+    def attrs(self) -> list[str]:
+        return ["imports"]
 
 @dataclass
 class FileImportAssociation:

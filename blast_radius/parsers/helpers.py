@@ -7,6 +7,8 @@ def check_expression_contains_symbol(node: ast.expr, symbol: str) -> bool:
     Recursively checks if the given AST expression node contains a name
     matching the target symbol's name.
     """
+    if node is None:
+        return False
     if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Load):
         # Check if the loaded name (a variable usage) matches the symbol's name
         if node.id == symbol:

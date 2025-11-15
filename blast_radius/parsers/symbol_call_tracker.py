@@ -19,6 +19,7 @@ class SymbolCallGatherer(BaseNodeVisitor):
         self.symbol = symbol
         self.symbol_containers = []
 
+
     def visit_AugAssign(self, node: ast.AugAssign):
         if check_expression_contains_symbol(node.value, self.symbol.symbl):
             self.symbol_containers.append(node)
@@ -55,7 +56,9 @@ class SymbolCallGatherer(BaseNodeVisitor):
         # class attribute annotations are handled in AnnAssign
         self.generic_visit(node)
     
-
+    @property
+    def attrs(self) -> list[str]:
+        return ["symbol", "symbol_containers"]
     
 @dataclass
 class SymbolContainerAssociations:
