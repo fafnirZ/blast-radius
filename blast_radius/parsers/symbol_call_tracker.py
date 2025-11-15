@@ -3,7 +3,10 @@
 
 
 import ast
+from dataclasses import dataclass
+from pathlib import Path
 
+from blast_radius.files import get_all_python_file_paths
 from blast_radius.parsers.base import BaseNodeVisitor
 from blast_radius.parsers.helpers import check_expression_contains_symbol
 from blast_radius.symbol import ClassSymbol, Symbol
@@ -54,5 +57,21 @@ class SymbolCallGatherer(BaseNodeVisitor):
     
 
     
+@dataclass
+class SymbolContainerAssociations:
 
+    associations: dict[Path, SymbolCallGatherer]
+
+    @classmethod
+    def build(cls, root_path: Path, symbol: Symbol) -> SymbolCallGatherer:
+        assert isinstance(root_path, Path)
+
+        _associations = {}
+        file_paths = get_all_python_file_paths(root_path)
+        
+        for file_path in file_paths:
+            gatherer = SymbolCallGatherer.from_file_path(file_path, symbol=symbol)
+            _associations[file_path] = gatherer
+        
+        return cls(associations=_associations)
     

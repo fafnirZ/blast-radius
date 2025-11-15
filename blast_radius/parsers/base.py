@@ -8,7 +8,7 @@ from typing import Self
 class BaseNodeVisitor(ast.NodeVisitor):
 
     @classmethod
-    def from_file_path(cls, file_path: Path) -> Self:
+    def from_file_path(cls, file_path: Path, *args, **kwargs) -> Self:
         # read raw file info
         try:
             with open(file_path, "r", encoding="utf-8") as file:
@@ -19,8 +19,8 @@ class BaseNodeVisitor(ast.NodeVisitor):
         return cls.from_source_code(source_code=source_code)
 
     @classmethod
-    def from_source_code(cls, source_code: str) -> Self:
-        inst = cls()
+    def from_source_code(cls, source_code: str, *args, **kwargs) -> Self:
+        inst = cls(*args, **kwargs)
         tree = ast.parse(source_code) 
         # traverse AST
         gatherer = inst
