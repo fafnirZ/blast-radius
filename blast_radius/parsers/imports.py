@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Optional, Union
 
 from blast_radius.files import get_all_python_file_paths
+from blast_radius.parsers.base import BaseNodeVisitor
 
 # Define a custom type to hold import information for clarity
 
@@ -23,7 +24,7 @@ class AliasInfo:
     def __repr__(self) -> str:
         return f"AliasInfo(name='{self.name}', asname='{self.asname}')"
 
-class ImportGatherer(ast.NodeVisitor):
+class ImportGatherer(BaseNodeVisitor):
     imports: list[ImportInfo]
 
     def __init__(self):
@@ -49,30 +50,6 @@ class ImportGatherer(ast.NodeVisitor):
         
         self.imports.append(ImportInfo(name=module_name, aliases=names))
         self.generic_visit(node) # Continue traversing
-    
-
-
-    @classmethod
-    def from_file_path(cls, file_path: Path) -> ImportGatherer:
-        inst = cls()
-
-        # read raw file info
-        try:
-            with open(file_path, "r", encoding="utf-8") as file:
-                source_code = file.read()
-        except FileNotFoundError:
-            print(f"Error: File not found at {file_path}")
-            return inst
-        tree = ast.parse(source_code) 
-
-        # traverse AST
-        gatherer = inst
-        gatherer.visit(tree)
-
-        return inst
-    
-    def __repr__(self) -> str:
-        return f"ImportGatherer(imports={self.imports})"
     
 
 @dataclass

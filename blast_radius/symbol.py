@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from functools import cached_property
 from pathlib import Path
 
 
@@ -20,6 +21,16 @@ class Symbol(ABC):
     @abstractmethod 
     def symbol_validation(self):
         raise NotImplementedError
+    
+    @cached_property
+    def file_path(self):
+        fp,_ = self.value.split(":")
+        return fp
+
+    @cached_property
+    def symbl(self):
+        _,sym = self.value.split(":")
+        return sym
 
 
 class ClassSymbol(Symbol):
