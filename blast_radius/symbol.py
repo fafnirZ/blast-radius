@@ -13,7 +13,7 @@ class Symbol(ABC):
     value: str
 
     def __post_init__(self):
-        assert self.value.split(":") == 2
+        assert len(self.value.split(":")) == 2
         path_to_file, _ = self.value.split(":")
         assert Path(path_to_file).is_file()
         self.symbol_validation()

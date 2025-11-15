@@ -16,7 +16,7 @@ class BaseNodeVisitor(ast.NodeVisitor):
         except FileNotFoundError:
             print(f"Error: File not found at {file_path}")
             return cls()
-        return cls.from_source_code(source_code=source_code)
+        return cls.from_source_code(source_code=source_code, *args, **kwargs)
 
     @classmethod
     def from_source_code(cls, source_code: str, *args, **kwargs) -> Self:
