@@ -19,7 +19,6 @@ class SymbolCallGatherer(BaseNodeVisitor):
         self.symbol = symbol
         self.symbol_containers = []
 
-
     def visit_AugAssign(self, node: ast.AugAssign):
         if check_expression_contains_symbol(node.value, self.symbol.symbl):
             self.symbol_containers.append(node)

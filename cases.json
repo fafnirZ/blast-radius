@@ -1,0 +1,4 @@
+[
+    "./run.sh sample/case1 --fn-symbol '/Users/jackyxie/dev/blast-radius/sample/case1/nested_folder/another_file.py:function1",
+    "/run.sh sample/case2 --cls-symbol '/Users/jackyxie/dev/blast-radius/sample/case2/file2.py:BClass.variable"
+]

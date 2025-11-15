@@ -26,7 +26,7 @@ if __name__ == "__main__":
     # pprint(import_associations)
     
     if args.cls_symbol:
-        symbol_assoc = SymbolContainerAssociations.build(library_path, ClassSymbol(args.cls_symbol))
+        symbol_assoc = SymbolContainerAssociations.build(library_path, ClassSymbol(args.cls_symbol).determine())
         pprint(symbol_assoc)
     if args.fn_symbol:
         symbol_assoc = SymbolContainerAssociations.build(library_path, FunctionSymbol(args.fn_symbol)) 
