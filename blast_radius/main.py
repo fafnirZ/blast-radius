@@ -1,7 +1,6 @@
 from pathlib import Path
-import sys
 from argparse import ArgumentParser
-from blast_radius.files import get_all_python_files
+from blast_radius.files import get_all_python_file_paths
 
 if __name__ == "__main__":
     parser = ArgumentParser()
@@ -11,5 +10,5 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
     library_path = args.library_path[0]
-    files = get_all_python_files(Path(library_path))
+    files = get_all_python_file_paths(Path(library_path))
     print(files)

@@ -6,7 +6,27 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = []
 
+[project.optional-dependencies]
+dev = [
+    # Testing
+    "pytest>=7.0",
+    "pytest-cov", # For coverage reports
+]
+
 [tool.setuptools.packages.find]
 include = [
     "blast_radius"
 ]
+
+[tool.pytest.ini_options]
+# Define which files/directories should be collected as tests
+python_files = "test_*.py"
+testpaths = [
+    "tests", # The directory containing your tests
+]
+# Common pytest arguments
+addopts = [
+    "--strict-markers",
+    "--import-mode=importlib",
+]
+
