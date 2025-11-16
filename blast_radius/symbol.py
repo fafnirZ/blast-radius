@@ -1,4 +1,4 @@
-"""TODO renamed as UserInputSymbol"""
+"""TODO renamed as GlobalIdentifiers"""
 from __future__ import annotations
 from abc import ABC, abstractmethod
 import ast
