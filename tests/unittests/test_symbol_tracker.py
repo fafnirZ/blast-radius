@@ -55,6 +55,10 @@ FILE_B = FileObj(
 from path.to.file_b import FirstClass
 class AnotherClass:
     attribute1: FirstClass
+              
+    def some_method():
+        self.attribute1.attribute
+        self.attribute1.method()
 """
     )
 )
@@ -66,12 +70,15 @@ BUCKET = Bucket(
 @pytest.mark.parametrize(
     "user_input, bucket, file_to_profile, expected_matches",
     [
-        ("path/to/file_a.py:FirstClass", BUCKET, FILE_A, []), # expected matches = 0 because nothing is a container of a ClassDefinition
-        ("path/to/file_a.py:FirstClass.attribute1", BUCKET, FILE_A, [ast.ClassDef, ast.AnnAssign]), 
-        ("path/to/file_a.py:FirstClass.method", BUCKET, FILE_A, [ast.ClassDef, ast.FunctionDef]),
+        ("path/to/file_a.py:FirstClass", BUCKET, FILE_A, []), # expected matches = 0 because its not be used on the file which defines the symbol
+        ("path/to/file_a.py:FirstClass.attribute1", BUCKET, FILE_A, []), # expected matches = 0 because its not be used on the file which defines the symbol
+        ("path/to/file_a.py:FirstClass.method", BUCKET, FILE_A, []), # expected matches = 0 because its not be used on the file which defines the symbol,
+        ("path/to/file_a.py:FirstClass", BUCKET, FILE_B, [ast.ClassDef, ast.AnnAssign]),
+        # ("path/to/file_a.py:FirstClass.attribute", BUCKET, FILE_B, [ast.ClassDef, ast.AnnAssign]), # TODO: this one is fairly complicated. 
+        # ("path/to/file_a.py:FirstClass.method", BUCKET, FILE_B, [ast.ClassDef, ast.AnnAssign]), # TODO: this one is fairly complicated. 
     ]
 )
-def test_class_symbol(
+def test_class_symbol_call(
     user_input, bucket, file_to_profile, expected_matches,
     tmp_path
 ):

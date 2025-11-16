@@ -13,7 +13,10 @@ from blast_radius.symbol import ClassAttributeSymbol, ClassMethodSymbol, ClassSy
 
 
 class SymbolCallGatherer(BaseNodeVisitor):
-
+    """
+    Used to profile Files which call a particular symbol.
+    It is NOT used to profile the File which DEFINES tghe symbol. so DONT use it there.
+    """
     def __init__(self, symbol: Symbol):
         assert isinstance(symbol, Symbol)
         self.symbol = symbol
