@@ -31,22 +31,32 @@ class SymbolCallGatherer(BaseNodeVisitor):
             RuntimeError
 
     def visit_AugAssign(self, node: ast.AugAssign):
-
-        if check_expression_contains_symbol(node.value, self.get_symbol()):
+        if node is None:
+            return
+        if check_expression_contains_symbol(node, self.get_symbol()):
             self.symbol_containers.append(node)
-        self.generic_visit(node)
+        if node:
+            self.generic_visit(node)
 
     def visit_AnnAssign(self, node: ast.AnnAssign):
-        if check_expression_contains_symbol(node.value, self.get_symbol()):
+        if node is None:
+            return
+        if check_expression_contains_symbol(node, self.get_symbol()):
             self.symbol_containers.append(node)
-        self.generic_visit(node)
+        if node:
+            self.generic_visit(node)
     
     def visit_Assign(self, node: ast.Assign):
-        if check_expression_contains_symbol(node.value, self.get_symbol()):
+        if node is None:
+            return
+        if check_expression_contains_symbol(node, self.get_symbol()):
             self.symbol_containers.append(node)
-        self.generic_visit(node)
+        if node:
+            self.generic_visit(node)
 
     def visit_FunctionDef(self, node: ast.FunctionDef):
+        if node is None:
+            return
         # check if function definition contains args
         for arg in node.args.args:
             if isinstance(self.symbol, ClassSymbol):
@@ -56,16 +66,25 @@ class SymbolCallGatherer(BaseNodeVisitor):
         # check if return statement contains symbol
         if check_expression_contains_symbol(node.returns, self.get_symbol()):
             self.symbol_containers.append(node)
-        self.generic_visit(node)
+        if node:
+            self.generic_visit(node)
 
     def visit_ClassDef(self, node: ast.ClassDef):
-        # bases (parent)
+        if node is None:
+            return
+        # bases (parent classes)
         if any([check_expression_contains_symbol(base, self.get_symbol())
                 for base in node.bases]):
             self.symbol_containers.append(node)
 
-        # class attribute annotations are handled in AnnAssign
-        self.generic_visit(node)
+        # check body
+        if any([check_expression_contains_symbol(base, self.get_symbol())
+                for base in node.body]):
+            self.symbol_containers.append(node)
+        
+        # continue
+        if node:
+            self.generic_visit(node)
     
     @property
     def attrs(self) -> list[str]:
