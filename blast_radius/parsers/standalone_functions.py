@@ -1,23 +1,23 @@
 
 
+from dataclasses import dataclass
 from typing import Any, Optional
 from blast_radius.parsers.base import BaseNodeVisitor
 
+@dataclass
 class FunctionArgumentInfo:
     arg_name: str
-    type_annotation: Optional[type]
+    type_annotation: Optional[str]
 
-class DefaultedFunctionArgumentInfo(FunctionArgumentInfo):
-    default: Any
-
+@dataclass
 class ReturnTypeInfo:
-    value: type
+    value: str
 
+@dataclass
 class StandaloneFunctionInfo:
     # ID should be a global reference to the symbol start
     name: str
     args: list[FunctionArgumentInfo]
-    kwargs: list[FunctionArgumentInfo|DefaultedFunctionArgumentInfo]
     returns: ReturnTypeInfo
     
     start_lineno: int
