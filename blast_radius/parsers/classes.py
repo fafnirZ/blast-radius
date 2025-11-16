@@ -48,6 +48,7 @@ class ClassSymbolGatherer(BaseNodeVisitor):
         arguments: ast.arguments = node.args
         for arg in [
             *arguments.args,
+            *arguments.kwonlyargs,
             # TODO kwargs?
         ]:
             __args.append(FunctionArgumentInfo(
@@ -67,8 +68,6 @@ class ClassSymbolGatherer(BaseNodeVisitor):
             elif decorator.id == "property":
                 __method_type = "property"
         
-
-            
 
         ###############
         # return type #

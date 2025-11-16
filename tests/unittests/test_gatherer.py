@@ -41,7 +41,7 @@ CASE_1_EXPECTED_OBJS = {
                 FunctionArgumentInfo(arg_name="arg", type_annotation="str"),
             ],
             method_type="class",
-            returns=ReturnTypeInfo(value="SomeOtherClass"),
+            returns=ReturnTypeInfo(value=None),
             start_lineno=10,
             end_lineno=11,
         )
