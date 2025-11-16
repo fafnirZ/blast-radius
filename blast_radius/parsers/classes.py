@@ -61,11 +61,14 @@ class ClassSymbolGatherer(BaseNodeVisitor):
         
         for decorator in node.decorator_list:
             if decorator.id == "classmethod":
-                __method_type == "class"
+                __method_type = "class"
             elif decorator.id == "staticmethod":
-                __method_type == "static"
+                __method_type = "static"
             elif decorator.id == "property":
-                __method_type == "property"
+                __method_type = "property"
+        
+
+            
 
         ###############
         # return type #
@@ -78,7 +81,7 @@ class ClassSymbolGatherer(BaseNodeVisitor):
                 __return_type = ReturnTypeInfo(value=node.returns.value)
             case _:
                 __return_type = ReturnTypeInfo(value=None)
-                
+
         self.methods.append(ClassMethodInfo(
             name=node.name,
             args=__args,
