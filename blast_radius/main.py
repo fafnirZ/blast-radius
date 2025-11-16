@@ -11,7 +11,6 @@ from blast_radius.symbol import ClassSymbol, FunctionSymbol
 def main(args):
     library_path = Path(args.library_path[0])
     import_associations = FileImportAssociation.build(library_path)
-    # pprint(import_associations)
     
     if args.cls_symbol:
         symbol_assoc = SymbolContainerAssociations.build(library_path, ClassSymbol(args.cls_symbol).determine())
