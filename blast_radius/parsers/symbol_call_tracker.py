@@ -9,7 +9,7 @@ from pathlib import Path
 from blast_radius.files import get_all_python_file_paths
 from blast_radius.parsers.base import BaseNodeVisitor
 from blast_radius.parsers.helpers import check_expression_contains_symbol
-from blast_radius.symbol import ClassSymbol, Symbol
+from blast_radius.symbol import ClassAttributeSymbol, ClassMethodSymbol, ClassSymbol, FunctionSymbol, Symbol
 
 
 class SymbolCallGatherer(BaseNodeVisitor):
@@ -19,18 +19,30 @@ class SymbolCallGatherer(BaseNodeVisitor):
         self.symbol = symbol
         self.symbol_containers = []
 
+    def get_symbol(self) -> str:
+        if isinstance(self.symbol, ClassSymbol):
+            if isinstance(self.symbol, (ClassMethodSymbol, ClassAttributeSymbol)):
+                return self.symbol.bound_callable_name
+            else:
+                return self.symbol.class_name 
+        elif isinstance(self.symbol, FunctionSymbol):
+            return self.symbol.symbl
+        else:
+            RuntimeError
+
     def visit_AugAssign(self, node: ast.AugAssign):
-        if check_expression_contains_symbol(node.value, self.symbol.symbl):
+
+        if check_expression_contains_symbol(node.value, self.get_symbol()):
             self.symbol_containers.append(node)
         self.generic_visit(node)
 
     def visit_AnnAssign(self, node: ast.AnnAssign):
-        if check_expression_contains_symbol(node.value, self.symbol.symbl):
+        if check_expression_contains_symbol(node.value, self.get_symbol()):
             self.symbol_containers.append(node)
         self.generic_visit(node)
     
     def visit_Assign(self, node: ast.Assign):
-        if check_expression_contains_symbol(node.value, self.symbol.symbl):
+        if check_expression_contains_symbol(node.value, self.get_symbol()):
             self.symbol_containers.append(node)
         self.generic_visit(node)
 
@@ -38,17 +50,17 @@ class SymbolCallGatherer(BaseNodeVisitor):
         # check if function definition contains args
         for arg in node.args.args:
             if isinstance(self.symbol, ClassSymbol):
-                if arg.annotation == self.symbol.symbl:
+                if arg.annotation == self.get_symbol():
                     self.symbol_containers.append(node)
                     break
         # check if return statement contains symbol
-        if check_expression_contains_symbol(node.returns, self.symbol.symbl):
+        if check_expression_contains_symbol(node.returns, self.get_symbol()):
             self.symbol_containers.append(node)
         self.generic_visit(node)
 
     def visit_ClassDef(self, node: ast.ClassDef):
         # bases (parent)
-        if any([check_expression_contains_symbol(base, self.symbol.symbl)
+        if any([check_expression_contains_symbol(base, self.get_symbol())
                 for base in node.bases]):
             self.symbol_containers.append(node)
 

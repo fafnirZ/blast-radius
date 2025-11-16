@@ -7,20 +7,8 @@ from blast_radius.parsers.imports import FileImportAssociation, ImportGatherer
 from blast_radius.parsers.symbol_call_tracker import SymbolContainerAssociations
 from blast_radius.symbol import ClassSymbol, FunctionSymbol
 
-if __name__ == "__main__":
-    parser = ArgumentParser()
-    parser.add_argument(
-        "library_path",
-        nargs=1
-    )
 
-    parser.add_argument(
-        "--cls-symbol",
-    )
-    parser.add_argument(
-        "--fn-symbol",
-    )
-    args = parser.parse_args()
+def main(args):
     library_path = Path(args.library_path[0])
     import_associations = FileImportAssociation.build(library_path)
     # pprint(import_associations)
@@ -31,3 +19,20 @@ if __name__ == "__main__":
     if args.fn_symbol:
         symbol_assoc = SymbolContainerAssociations.build(library_path, FunctionSymbol(args.fn_symbol)) 
         pprint(symbol_assoc)
+
+
+if __name__ == "__main__":
+    parser = ArgumentParser()
+    parser.add_argument(
+        "library_path",
+        nargs=1,
+    )
+    parser.add_argument(
+        "--cls-symbol",
+    )
+    parser.add_argument(
+        "--fn-symbol",
+    )
+    args = parser.parse_args()
+    main(args)
+    exit(0)

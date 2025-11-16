@@ -85,17 +85,30 @@ class ClassSymbol(Symbol):
         else:
             raise RuntimeError
 
+    @property
+    def class_name(self) -> str:
+        return self.symbl.split(".")[0]
+    
 
 
 class ClassMethodSymbol(ClassSymbol):
     """ClassName.method_name"""
     def symbol_validation(self):
         assert len(self.symbl.split(".")) == 2
+    
+    @property
+    def bound_callable_name(self) -> str:
+        return self.symbl.split(".")[1]
+    
 
 class ClassAttributeSymbol(ClassSymbol):
     """ClassName.attribute_name"""
     def symbol_validation(self):
         assert len(self.symbl.split(".")) == 2
+
+    @property
+    def bound_callable_name(self) -> str:
+        return self.symbl.split(".")[1]
 
 class FunctionSymbol(Symbol):
     """FunctionName"""
