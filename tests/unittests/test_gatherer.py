@@ -4,6 +4,7 @@ import json
 from pprint import pprint
 import pytest
 from blast_radius.parsers.classes import ClassAttributeInfo, ClassBaseClassInfo, ClassMethodInfo, ClassSymbolGatherer
+from blast_radius.parsers.file import EntireFileSymbolGatherer
 from blast_radius.parsers.imports import FromImportInfo, ImportGatherer, NormalImportInfo
 from blast_radius.parsers.standalone_functions import FunctionArgumentInfo, ReturnTypeInfo
 import difflib
@@ -69,6 +70,13 @@ CASE_2_EXPECTED_OBJS = {
     ] 
 }
 
+CASE_3_CODE = CASE_2_CODE + CASE_1_CODE
+CASE_3_EXPECTED_OBJS = {
+    "imports": CASE_2_EXPECTED_OBJS,
+    "classes": [CASE_1_EXPECTED_OBJS],
+    "standalone_functions": [],
+}
+
 @pytest.mark.parametrize(
     "content, expected, gatherer_class",
     [
@@ -76,7 +84,7 @@ CASE_2_EXPECTED_OBJS = {
         (CASE_2_CODE, CASE_2_EXPECTED_OBJS, ImportGatherer),
     ]
 )
-def test_class_symbol_gatherer(content, expected, gatherer_class):
+def test_symbol_gatherer(content, expected, gatherer_class):
 
     gatherer = gatherer_class.from_source_code(content)
     gatherer_data_dict = {
@@ -96,3 +104,38 @@ def test_class_symbol_gatherer(content, expected, gatherer_class):
 
     
     assert gatherer_data_dict == expected
+
+@pytest.mark.parametrize(
+    "content, expected, gatherer_class",
+    [
+        (CASE_3_CODE, CASE_3_EXPECTED_OBJS, EntireFileSymbolGatherer),
+    ]
+)
+def test_entire_file_symbol_gatherer(content, expected, gatherer_class):
+    gatherer = gatherer_class.from_source_code(content) 
+    print(gatherer)
+    results = {}
+    for attr_str in gatherer.attrs:
+        nested_gatherer = getattr(gatherer, attr_str)
+        if isinstance(nested_gatherer, list):
+            l = []
+            for nested in nested_gatherer:
+                gatherer_data_dict = {
+                    attr: getattr(nested, attr)
+                    for attr in nested.attrs
+                }
+                l.append(gatherer_data_dict)
+            results[attr_str] = l
+
+        else:
+            gatherer_data_dict = {
+                attr: getattr(nested_gatherer, attr)
+                for attr in nested_gatherer.attrs
+            }
+            results[attr_str] = gatherer_data_dict
+    
+    pprint(results)
+    pprint(expected)
+    assert results == expected
+
+
