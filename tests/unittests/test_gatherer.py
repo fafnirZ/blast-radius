@@ -70,7 +70,8 @@ CASE_2_EXPECTED_OBJS = {
     ] 
 }
 
-CASE_3_CODE = CASE_2_CODE + CASE_1_CODE
+# CASE_3_CODE = CASE_2_CODE + CASE_1_CODE
+CASE_3_CODE = CASE_1_CODE + CASE_2_CODE # NOTE THE ORDER IS VERY HACKY because if i put imports first the line number needs changing. but here im importing after just because I can :)
 CASE_3_EXPECTED_OBJS = {
     "imports": CASE_2_EXPECTED_OBJS,
     "classes": [CASE_1_EXPECTED_OBJS],
@@ -113,7 +114,6 @@ def test_symbol_gatherer(content, expected, gatherer_class):
 )
 def test_entire_file_symbol_gatherer(content, expected, gatherer_class):
     gatherer = gatherer_class.from_source_code(content) 
-    print(gatherer)
     results = {}
     for attr_str in gatherer.attrs:
         nested_gatherer = getattr(gatherer, attr_str)
