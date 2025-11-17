@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 from typing import Any, Optional
-from blast_radius.parsers.base import BaseNodeVisitor
+from blast_radius.symbol_gatherers.base import BaseNodeVisitor
 
 @dataclass
 class FunctionArgumentInfo:

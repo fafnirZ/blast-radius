@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Optional, Union
 
 from blast_radius.files import get_all_python_file_paths
-from blast_radius.parsers.base import BaseNodeVisitor
+from blast_radius.symbol_gatherers.base import BaseNodeVisitor
 
 # Define a custom type to hold import information for clarity
 

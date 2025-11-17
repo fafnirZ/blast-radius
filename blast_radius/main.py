@@ -3,8 +3,8 @@ from pathlib import Path
 from argparse import ArgumentParser
 from pprint import pprint
 from blast_radius.files import get_all_python_file_paths
-from blast_radius.parsers.imports import FileImportAssociation, ImportGatherer
-from blast_radius.parsers.symbol_call_tracker import SymbolContainerAssociations
+from blast_radius.symbol_gatherers.imports import FileImportAssociation, ImportGatherer
+from blast_radius.symbol_gatherers.symbol_call_tracker import SymbolContainerAssociations
 from blast_radius.symbol import ClassSymbol, FunctionSymbol
 
 

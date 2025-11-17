@@ -2,10 +2,10 @@ from __future__ import annotations
 import ast
 from dataclasses import dataclass
 from pathlib import Path
-from blast_radius.parsers.base import BaseNodeVisitor
-from blast_radius.parsers.classes import ClassSymbolGatherer
-from blast_radius.parsers.imports import ImportGatherer
-from blast_radius.parsers.standalone_functions import StandaloneFunctionGatherer
+from blast_radius.symbol_gatherers.base import BaseNodeVisitor
+from blast_radius.symbol_gatherers.classes import ClassSymbolGatherer
+from blast_radius.symbol_gatherers.imports import ImportGatherer
+from blast_radius.symbol_gatherers.standalone_functions import StandaloneFunctionGatherer
 
 class EntireFileSymbolGatherer(BaseNodeVisitor):
 

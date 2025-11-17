@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from pathlib import Path
 import pytest
 
-from blast_radius.parsers.archive.symbol_call_tracker import SymbolCallGatherer
+from blast_radius.symbol_gatherers.archive.symbol_call_tracker import SymbolCallGatherer
 from blast_radius.symbol import ClassSymbol
 
 @dataclass

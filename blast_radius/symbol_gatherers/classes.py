@@ -2,8 +2,8 @@ from __future__ import annotations
 import ast
 from dataclasses import dataclass
 from typing import Literal
-from blast_radius.parsers.base import BaseNodeVisitor
-from blast_radius.parsers.standalone_functions import FunctionArgumentInfo, ReturnTypeInfo, StandaloneFunctionInfo
+from blast_radius.symbol_gatherers.base import BaseNodeVisitor
+from blast_radius.symbol_gatherers.standalone_functions import FunctionArgumentInfo, ReturnTypeInfo, StandaloneFunctionInfo
 
 @dataclass
 class ClassAttributeInfo:

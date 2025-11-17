@@ -7,8 +7,8 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from blast_radius.files import get_all_python_file_paths
-from blast_radius.parsers.base import BaseNodeVisitor
-from blast_radius.parsers.helpers import check_expression_contains_symbol
+from blast_radius.symbol_gatherers.base import BaseNodeVisitor
+from blast_radius.symbol_gatherers.helpers import check_expression_contains_symbol
 from blast_radius.symbol import ClassAttributeSymbol, ClassMethodSymbol, ClassSymbol, FunctionSymbol, Symbol
 
 

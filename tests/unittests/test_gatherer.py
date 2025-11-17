@@ -3,10 +3,10 @@ from io import StringIO
 import json
 from pprint import pprint
 import pytest
-from blast_radius.parsers.classes import ClassAttributeInfo, ClassBaseClassInfo, ClassMethodInfo, ClassSymbolGatherer
-from blast_radius.parsers.file import EntireFileSymbolGatherer
-from blast_radius.parsers.imports import FromImportInfo, ImportGatherer, NormalImportInfo
-from blast_radius.parsers.standalone_functions import FunctionArgumentInfo, ReturnTypeInfo
+from blast_radius.symbol_gatherers.classes import ClassAttributeInfo, ClassBaseClassInfo, ClassMethodInfo, ClassSymbolGatherer
+from blast_radius.symbol_gatherers.file import EntireFileSymbolGatherer
+from blast_radius.symbol_gatherers.imports import FromImportInfo, ImportGatherer, NormalImportInfo
+from blast_radius.symbol_gatherers.standalone_functions import FunctionArgumentInfo, ReturnTypeInfo
 import difflib
 
 CASE_1_CODE = """
