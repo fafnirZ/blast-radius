@@ -7,111 +7,71 @@ from functools import cached_property
 from pathlib import Path
 
 
-@dataclass
-class Symbol(ABC):
-    """A symbol must be globally unique so must include a path to the file.
+class GlobalIdentifier(ABC):
+    """Global Identifer to a atomic line/symbol.
     
-    /path/to/file.py:ClassName
+    Given a global identifier, one must always be able 
+    to pinpoint exactly the symbol/line at question.
     """
     value: str
 
-    def __post_init__(self):
-        assert len(self.value.split(":")) == 2
-        path_to_file, _ = self.value.split(":")
-        assert Path(path_to_file).is_file()
-        self.symbol_validation()
-
-    @abstractmethod 
-    def symbol_validation(self):
+    @abstractmethod
+    def validate_structure(self):
         raise NotImplementedError
     
-    @cached_property
-    def file_path(self) -> str:
-        fp,_ = self.value.split(":")
-        return fp
+    def validate_existance(self):
+        raise NotImplementedError("not sure when I want to implement this, but we should validate that this symbol actually exists.")
 
-    @cached_property
-    def symbl(self) -> str:
-        _,sym = self.value.split(":")
-        return sym
+@dataclass
+class LineReference(GlobalIdentifier):
+    """/path/to/file.py:{line_number}"""
+    def validate_structure(self):
+       assert len(self.value.split(":")) == 2
 
+@dataclass
+class Symbol(GlobalIdentifier):
+    """/path/to/file.py:{symbol}"""
+    def validate_structure(self):
+        assert len(self.value.split(":")) == 2
 
 class ClassSymbol(Symbol):
-    def symbol_validation(self):
-        assert 1 <= len(self.symbl.split(".")) <= 2
+    """/path/to/file.py:ClassName""" 
+    def validate_structure(self):
+        super().validate_structure()
+        _,symbol_section = self.value.split(":")
+        assert len(symbol_section.split(".")) == 1
 
-    def determine(self) -> ClassMethodSymbol | ClassAttributeSymbol:
-        """Raises Exceptions."""
-        split_len = len(self.symbl.split("."))
-        if split_len == 1:
-            return self
-        elif split_len == 2:
-            fp = Path(self.file_path)
-            assert fp.is_file()
-            source_code = fp.read_text()
-            tree = ast.parse(source_code)
+class ClassMethodSymbol(Symbol):
+    """/path/to/file.py:ClassName.method_name"""
+    def validate_structure(self):
+        super().validate_structure()
+        _,symbol_section = self.value.split(":")
+        assert len(symbol_section.split(".")) == 2
 
-            class_name, bound_obj_name = self.symbl.split(".")
-
-            ###############################################
-            # get all ClassDefn Nodes matching class_name
-            ###############################################
-            matching_class_nodes = [
-                node
-                for node in ast.walk(tree)
-                if isinstance(node, ast.ClassDef) and node.name == class_name
-            ]
-            assert len(matching_class_nodes) == 1
-            class_node = matching_class_nodes[0]
-
-            #################################################
-            # get all method or attribute where it matches 
-            #################################################
-            matching_bound_objects = [
-                node
-                for node in ast.walk(class_node)
-                if (
-                    (isinstance(node, ast.FunctionDef) and node.name == bound_obj_name)
-                    or (isinstance(node, ast.AnnAssign) and node.target.id == bound_obj_name)
-                )
-            ]
-            assert len(matching_bound_objects) == 1
-            matching_bound_object = matching_bound_objects[0]
-            if isinstance(matching_bound_object, ast.FunctionDef):
-                return ClassMethodSymbol(self.value)
-            elif isinstance(matching_bound_object, ast.AnnAssign):
-                return ClassAttributeSymbol(self.value)
-            else:
-                raise RuntimeError
-        else:
-            raise RuntimeError
-
-    @property
-    def class_name(self) -> str:
-        return self.symbl.split(".")[0]
-    
-
-
-class ClassMethodSymbol(ClassSymbol):
-    """ClassName.method_name"""
-    def symbol_validation(self):
-        assert len(self.symbl.split(".")) == 2
-    
-    @property
-    def bound_callable_name(self) -> str:
-        return self.symbl.split(".")[1]
-    
+class ClassMethodVariableSymbol(Symbol):
+    """/path/to/file.py:ClassName.method_name.variable"""
+    def validate_structure(self):
+        super().validate_structure()
+        _,symbol_section = self.value.split(":")
+        assert len(symbol_section.split(".")) == 3
 
 class ClassAttributeSymbol(ClassSymbol):
-    """ClassName.attribute_name"""
-    def symbol_validation(self):
-        assert len(self.symbl.split(".")) == 2
-
-    @property
-    def bound_callable_name(self) -> str:
-        return self.symbl.split(".")[1]
+    """/path/to/file.py:ClassName.attribute_name"""
+    def validate_structure(self):
+        super().validate_structure()
+        _,symbol_section = self.value.split(":")
+        assert len(symbol_section.split(".")) == 2
 
 class FunctionSymbol(Symbol):
-    """FunctionName"""
-    def symbol_validation(self):
-        assert len(self.symbl.split(".")) == 1
+    """/path/to/file.py:FunctionName"""
+    def validate_structure(self):
+        super().validate_structure()
+        _,symbol_section = self.value.split(":")
+        assert len(symbol_section.split(".")) == 1
+
+class FunctionVariableSymbol(Symbol):
+    """/path/to/file.py:Function.variable"""
+    def validate_structure(self):
+        super().validate_structure()
+        _,symbol_section = self.value.split(":")
+        assert len(symbol_section.split(".")) == 2
