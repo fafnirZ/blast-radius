@@ -3,7 +3,7 @@ import ast
 from dataclasses import dataclass
 from typing import Literal
 from blast_radius.symbol_gatherers.base import BaseNodeVisitor
-from blast_radius.symbol_gatherers.standalone_functions import FunctionArgumentInfo, ReturnTypeInfo, StandaloneFunctionInfo
+from blast_radius.symbol_gatherers.standalone_functions import FunctionArgumentInfo, ReturnTypeInfo, StandaloneFunctionSummaryInfo
 
 @dataclass
 class ClassAttributeInfo:
@@ -15,14 +15,14 @@ class ClassBaseClassInfo:
     base_class_name: str
 
 @dataclass
-class ClassMethodInfo(StandaloneFunctionInfo):
+class ClassMethodSummaryInfo(StandaloneFunctionSummaryInfo):
     method_type: Literal["instance", "class", "static", "property"]
     
 
 class ClassSymbolGatherer(BaseNodeVisitor):
     bases: list[ClassBaseClassInfo]
     attributes: list[ClassAttributeInfo]
-    methods: list[ClassMethodInfo]
+    methods: list[ClassMethodSummaryInfo]
 
     def __init__(self):
         self.bases = []
@@ -81,7 +81,7 @@ class ClassSymbolGatherer(BaseNodeVisitor):
             case _:
                 __return_type = ReturnTypeInfo(value=None)
 
-        self.methods.append(ClassMethodInfo(
+        self.methods.append(ClassMethodSummaryInfo(
             name=node.name,
             args=__args,
             method_type=__method_type,

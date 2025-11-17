@@ -3,7 +3,7 @@ from io import StringIO
 import json
 from pprint import pprint
 import pytest
-from blast_radius.symbol_gatherers.classes import ClassAttributeInfo, ClassBaseClassInfo, ClassMethodInfo, ClassSymbolGatherer
+from blast_radius.symbol_gatherers.classes import ClassAttributeInfo, ClassBaseClassInfo, ClassMethodSummaryInfo, ClassSymbolGatherer
 from blast_radius.symbol_gatherers.file import EntireFileSymbolGatherer
 from blast_radius.symbol_gatherers.imports import FromImportInfo, ImportGatherer, NormalImportInfo
 from blast_radius.symbol_gatherers.standalone_functions import FunctionArgumentInfo, ReturnTypeInfo
@@ -28,7 +28,7 @@ CASE_1_EXPECTED_OBJS = {
         ClassAttributeInfo(attr_name="attribute2", attr_type="int"),
     ],
     "methods": [
-        ClassMethodInfo(
+        ClassMethodSummaryInfo(
             name="method_1",
             args=[FunctionArgumentInfo(arg_name="self", type_annotation=None)],
             method_type="instance",
@@ -36,7 +36,7 @@ CASE_1_EXPECTED_OBJS = {
             start_lineno=6,
             end_lineno=7
         ),
-        ClassMethodInfo(
+        ClassMethodSummaryInfo(
             name="method_2",
             args=[
                 FunctionArgumentInfo(arg_name="cls", type_annotation=None),

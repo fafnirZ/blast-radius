@@ -4,6 +4,9 @@ from dataclasses import dataclass
 from typing import Any, Optional
 from blast_radius.symbol_gatherers.base import BaseNodeVisitor
 
+################################
+# Function Summary Information
+################################
 @dataclass
 class FunctionArgumentInfo:
     arg_name: str
@@ -14,7 +17,7 @@ class ReturnTypeInfo:
     value: str
 
 @dataclass
-class StandaloneFunctionInfo:
+class StandaloneFunctionSummaryInfo:
     # ID should be a global reference to the symbol start
     name: str
     args: list[FunctionArgumentInfo]
@@ -23,7 +26,13 @@ class StandaloneFunctionInfo:
     start_lineno: int
     end_lineno: int
 
-    # TODO: process body
+################################
+# Function Content Information #
+################################
+
+@dataclass
+class StandaloneFunctionContentInfo:
+    pass
 
 class StandaloneFunctionGatherer(BaseNodeVisitor):
     pass
