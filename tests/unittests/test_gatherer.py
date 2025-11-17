@@ -4,6 +4,7 @@ import json
 from pprint import pprint
 import pytest
 from blast_radius.parsers.classes import ClassAttributeInfo, ClassBaseClassInfo, ClassMethodInfo, ClassSymbolGatherer
+from blast_radius.parsers.imports import FromImportInfo, ImportGatherer, NormalImportInfo
 from blast_radius.parsers.standalone_functions import FunctionArgumentInfo, ReturnTypeInfo
 import difflib
 
@@ -48,15 +49,36 @@ CASE_1_EXPECTED_OBJS = {
     ]
 }
 
+CASE_2_CODE = """
+import module1.sub1.sub2
+import module1.sub2.sub2 as alias1
+from anothermodule.module1 import Class as AnotherClass
+from anothermodule.module2 import (
+    function_1,
+    function_2 as function_X,
+)
+"""
+
+CASE_2_EXPECTED_OBJS = {
+    "imports": [
+        NormalImportInfo(import_path="module1.sub1.sub2", alias=None),
+        NormalImportInfo(import_path="module1.sub2.sub2", alias="alias1"),
+        FromImportInfo(import_path="anothermodule.module1", subject="Class", alias="AnotherClass"),
+        FromImportInfo(import_path="anothermodule.module2", subject="function_1", alias=None),
+        FromImportInfo(import_path="anothermodule.module2", subject="function_2", alias="function_X"),
+    ] 
+}
+
 @pytest.mark.parametrize(
-    "content, expected",
+    "content, expected, gatherer_class",
     [
-        (CASE_1_CODE, CASE_1_EXPECTED_OBJS)
+        (CASE_1_CODE, CASE_1_EXPECTED_OBJS, ClassSymbolGatherer),
+        (CASE_2_CODE, CASE_2_EXPECTED_OBJS, ImportGatherer),
     ]
 )
-def test_class_symbol_gatherer(content, expected):
+def test_class_symbol_gatherer(content, expected, gatherer_class):
 
-    gatherer = ClassSymbolGatherer.from_source_code(content)
+    gatherer = gatherer_class.from_source_code(content)
     gatherer_data_dict = {
         attr: getattr(gatherer, attr)
         for attr in gatherer.attrs

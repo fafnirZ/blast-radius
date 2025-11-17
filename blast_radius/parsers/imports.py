@@ -9,20 +9,19 @@ from blast_radius.parsers.base import BaseNodeVisitor
 
 # Define a custom type to hold import information for clarity
 
-@dataclass
 class ImportInfo:
-    name: str
-    aliases: Optional[list[AliasInfo]]
-    def __repr__(self) -> str:
-        return f"ImportInfo(name='{self.name}',aliases={self.aliases})"
+    pass
 
 @dataclass
-class AliasInfo:
-    name: str
-    asname: str | None
+class FromImportInfo(ImportInfo):
+    import_path: str
+    subject: str
+    alias: Optional[str]
 
-    def __repr__(self) -> str:
-        return f"AliasInfo(name='{self.name}', asname='{self.asname}')"
+@dataclass
+class NormalImportInfo(ImportInfo):
+    import_path: str
+    alias: Optional[str]
 
 class ImportGatherer(BaseNodeVisitor):
     imports: list[ImportInfo]
@@ -33,24 +32,19 @@ class ImportGatherer(BaseNodeVisitor):
 
 
     def visit_Import(self, node: ast.Import):
-        # Handles statements like: 'import module1', 'import module2 as alias'
-        names = []
-        for alias in node.names:
-            names.append(AliasInfo(name=alias.name, asname=alias.asname))
+        for obj in node.names:
+            self.imports.append(NormalImportInfo(import_path=obj.name, alias=obj.asname))
         
-        # 'module' is None for a standard 'import' statement
-        self.imports.append(ImportInfo(name=None, aliases=names))
-        self.generic_visit(node) # Continue traversing any nested nodes, though unlikely here
+        # # 'module' is None for a standard 'import' statement
 
     def visit_ImportFrom(self, node: ast.ImportFrom):
-        # Handles statements like: 'from module import name1', 'from . import name2 as alias'
         module_name = node.module # The module name (e.g., 'os', 'mypackage.submodule')
-        names: list[AliasInfo] = []
-        for alias in node.names:
-            names.append(AliasInfo(name=alias.name, asname=alias.asname))
-        
-        self.imports.append(ImportInfo(name=module_name, aliases=names))
-        self.generic_visit(node) # Continue traversing
+        for obj in node.names:
+            self.imports.append(FromImportInfo(
+                import_path=module_name,
+                subject=obj.name,
+                alias=obj.asname
+            ))
 
     @property
     def attrs(self) -> list[str]:
